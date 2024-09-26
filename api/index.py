@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-app = Flask(__name__)
 
 from flask_cors import CORS  # Importar la extensión
 import pandas as pd
@@ -9,9 +8,16 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
+app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
 @app.route("/api/python")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+@app.route("/api/hola")
+def hola():
+    return "<p>Hola</p>"
 
 @app.route('/api/get_attributes', methods=['POST'])
 def get_attributes():

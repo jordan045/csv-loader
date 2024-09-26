@@ -26,30 +26,36 @@ function FileUpload() {
     setAttributes(data.attributes);
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
-
+  
     if (!file || !xAttribute || !yAttribute) {
-        alert("Por favor selecciona un archivo y los atributos");
-        return;
+      alert("Por favor selecciona un archivo y los atributos");
+      return;
     }
-
+  
     // Crear FormData con archivo y atributos seleccionados
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('xAttribute', xAttribute);  // Añadir atributos a FormData
+    formData.append('xAttribute', xAttribute);
     formData.append('yAttribute', yAttribute);
-
-    const response = await fetch('http://localhost:5328/generate_graph', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ xAttribute, yAttribute }),
-    });
-
-    const data = await response.json();
-    setGraph(data.graph);
+  
+    try {
+      const response = await fetch('http://localhost:3000/api/generate_graph', {
+        method: 'POST',
+        body: formData,  // Enviar FormData
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al generar el gráfico');
+      }
+  
+      const data = await response.json();
+      setGraph(data.graph);
+    } catch (error: any) {
+      console.error('Error:', error);
+      alert(error.message);
+    }
   };
 
   return (
