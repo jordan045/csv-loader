@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 function FileUpload() {
   const [file, setFile] = useState(null);
@@ -8,6 +9,7 @@ function FileUpload() {
   const [xAttribute, setXAttribute] = useState('');
   const [yAttribute, setYAttribute] = useState('');
   const [graph, setGraph] = useState('');
+  const [onTime, setOnTime] = useState(false);
 
   const handleFileChange = async (e: any) => {
     const uploadedFile = e.target.files[0];
@@ -29,7 +31,7 @@ function FileUpload() {
   const handleSubmit = async (e:any) => {
     e.preventDefault();
   
-    if (!file || !xAttribute || !yAttribute) {
+    if (!file || !xAttribute ) {
       alert("Por favor selecciona un archivo y los atributos");
       return;
     }
@@ -39,6 +41,7 @@ function FileUpload() {
     formData.append('file', file);
     formData.append('xAttribute', xAttribute);
     formData.append('yAttribute', yAttribute);
+    formData.append('onTime', onTime ? '1' : '0');
   
     try {
       const response = await fetch('http://localhost:3000/api/generate_graph', {
@@ -75,18 +78,22 @@ function FileUpload() {
             </label>
             <label>
               Atributo Y:
-              <select value={yAttribute} onChange={(e) => setYAttribute(e.target.value)}>
+              <select value={yAttribute} onChange={(e) => setYAttribute(e.target.value)} disabled={onTime}>
                 <option value="">Seleccionar</option>
                 {attributes.map((attr) => (
                   <option key={attr} value={attr}>{attr}</option>
                 ))}
               </select>
+            <label>
+              Mostrar en tiempo real:
+              <input type="checkbox" checked={onTime} onChange={(e) => setOnTime(e.target.checked)} />
+            </label>
             </label>
           </div>
         )}
         <button type="submit">Generar Gráfico</button>
       </form>
-      {graph && <img src={graph} alt="Graph" />}
+      {graph && <Image src={graph} alt="Graph" width={800} height={600}/>}
     </div>
   );
 }
