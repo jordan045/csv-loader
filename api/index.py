@@ -21,8 +21,6 @@ def get_attributes():
     if file and file.filename.endswith('.csv'):
         df = pd.read_csv(file)
         attributes = df.columns.tolist()
-        num_lines = len(df)  # Cantidad de filas, excluyendo el encabezado
-        attributes.insert(0, f"Cantidad de líneas: {num_lines}")
         return jsonify({'attributes': attributes})
     return jsonify({'error': 'File format not supported'}), 400
 
@@ -37,20 +35,30 @@ def upload_file():
     y_attribute = request.form.get('yAttribute')  # Debe venir desde form, no JSON
     on_time = request.form.get('onTime') == '1'
 
-    if file and file.filename.endswith('.csv') and x_attribute and (y_attribute or on_time):
+    if file and file.filename.endswith('.csv') and y_attribute and (x_attribute or on_time):
         # Leer el archivo CSV desde el archivo subido
         df = pd.read_csv(file)
-        x_axis = df[x_attribute]
+
         y_axis = df[y_attribute]
-        
-        # Generar gráfico en base a los atributos seleccionados
-        plt.figure(figsize=(10, 6))
         if on_time:
-            df.plot(x_axis, y_axis, label="On Time", color="green")
+            x_axis = range(len(y_axis)) 
         else:
-            df.plot(x=x_attribute, y=y_attribute)
+            if x_attribute == y_attribute:
+                x_axis = df[x_attribute]
+                y_axis = x_axis
+            else:
+                x_axis = df[x_attribute]
+                y_axis = df[y_attribute] 
+             
+        
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(x_axis,y_axis)
         plt.title("Grafico re cheto!")
-        plt.xlabel(x_attribute)
+        if on_time:
+            plt.xlabel("Tiempo")
+        else:
+            plt.xlabel(x_attribute)
         plt.ylabel(y_attribute)
         img = BytesIO()
         plt.savefig(img, format='png', dpi=300)
