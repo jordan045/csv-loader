@@ -38,7 +38,7 @@ export default function CardWrapper({ graphs }: CardWrapperProps) {
                         <Button variant="ghost" onClick={() => handleDownload(index)}>
                             <Download04Icon />
                         </Button>
-                        <Button variant="ghost" onClick={() => handleDelete(index)}>
+                        <Button variant="ghost">
                             <Delete02Icon />
                         </Button>
                     </div>
