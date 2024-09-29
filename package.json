@@ -7,7 +7,7 @@
     "flask-run": "python -m flask --app api/index run -p 5328",
     "next-dev": "next dev",
     "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-run\"",
-    "build": "concurrently\"next build\" \"npm run flask-dev\"",
+    "build": "concurrently \"next build\" \"npm run flask-dev\"",
     "start": "next start",
     "lint": "next lint"
   },
