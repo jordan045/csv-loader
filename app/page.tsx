@@ -17,14 +17,17 @@ export default function Home() {
 
 	return (
 		<main className="flex flex-col min-h-screen justify-between pt-10 w-11/12 mx-auto">
-			<Header />
 			<div className="flex flex-row mt-2">
-				<div className="flex justify-start w-1/2">
-					<CardWrapper graphs={graphs} />
+				<div className='flex flex-col w-1/2'>
+					<Header />
+					<div className="flex justify-start ">
+						<CardWrapper graphs={graphs} />
+					</div>
 				</div>
 				<div className="flex justify-end w-1/2">
 					<FileUpload onGraphGenerated={handleGraphGenerated} />
 				</div>
+
 			</div>
 		</main>
 	)

@@ -45,6 +45,11 @@ const FormSchema = z.object({
 		})
 		.email(),
 })
+const PlusSignIcon = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={24} height={24} color={"#000000"} fill={"none"} {...props}>
+		<path d="M12 4V20M20 12H4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
 
 interface FileUploadProps {
 	onGraphGenerated: (graph: string) => void
@@ -57,8 +62,10 @@ function FileUpload(
 	const [attributes, setAttributes] = useState([]);
 	const [xAttribute, setXAttribute] = useState('');
 	const [yAttribute, setYAttribute] = useState('');
+	const [AuxAttribute, setAuxAttribute] = useState('');
 	const [graph, setGraph] = useState('');
 	const [onTime, setOnTime] = useState(false);
+	const [showAux, setShowAux] = useState(false);
 
 	const handleFileChange = async (e: any) => {
 		const uploadedFile = e.target.files[0];
@@ -90,6 +97,7 @@ function FileUpload(
 		formData.append('file', file);
 		formData.append('xAttribute', xAttribute);
 		formData.append('yAttribute', yAttribute);
+		formData.append('AuxAttribute', AuxAttribute);
 		formData.append('onTime', onTime ? '1' : '0');
 
 		const graph = await generateGraph(formData);
@@ -102,7 +110,7 @@ function FileUpload(
 
 	return (
 		<div>
-			<Card className="w-[500px]">
+			<Card className="w-[500px] bg-zinc-50">
 				<CardHeader>
 					<CardTitle>Crear gráfico</CardTitle>
 					<CardDescription>Genera un grafico con matplotlib</CardDescription>
@@ -183,30 +191,65 @@ function FileUpload(
 										</div>
 									)}
 								/>
-								<FormField
-									name="eje_y"
-									render={({ field }) => (
-										<FormItem className='rounded-md border p-4'>
-											<FormLabel>Eje Y</FormLabel>
-											<Select onValueChange={(value: any) => {
-												field.onChange(value);
-												setYAttribute(value);
-											}} defaultValue={field.value} disabled={!attributes.length}>
-												<FormControl>
-													<SelectTrigger id="eje_y">
-														<SelectValue placeholder="Selecciona un atributo" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent position="popper">
-													{attributes.map((attr: any) => (
-														<SelectItem key={attr} value={attr}>{attr}</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
+								<div className='rounded-md border p-4'>
+
+									<FormField
+										name="eje_y"
+										render={({ field }) => (
+											<FormItem >
+												<FormLabel>Eje Y</FormLabel>
+												<Select onValueChange={(value: any) => {
+													field.onChange(value);
+													setYAttribute(value);
+												}} defaultValue={field.value} disabled={!attributes.length}>
+													<FormControl>
+														<SelectTrigger id="eje_y">
+															<SelectValue placeholder="Selecciona un atributo" />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent position="popper">
+														{attributes.map((attr: any) => (
+															<SelectItem key={attr} value={attr}>{attr}</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<Button variant="outline" type="button" onClick={() => {
+													setShowAux(!showAux);
+												}}>
+													<PlusSignIcon className="h-4 w-4 mr-2" />
+													<Label>Agregar operador</Label>
+												</Button>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									{showAux && (
+										<FormField
+											name="operador_aux"
+											render={({ field }) => (
+												<FormItem className='mt-2'>
+													<FormLabel>Operador auxiliar</FormLabel>
+													<Select onValueChange={(value: any) => {
+														field.onChange(value);
+														setAuxAttribute(value);
+													}} defaultValue={field.value} disabled={!attributes.length}>
+														<FormControl>
+															<SelectTrigger id="operador_aux">
+																<SelectValue placeholder="Selecciona un atributo" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent position="popper">
+															{attributes.map((attr: any) => (
+																<SelectItem key={attr} value={attr}>{attr}</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
 									)}
-								/>
+								</div>
 								<Button type="submit">Generar gráfico</Button>
 							</div>
 						</form>
@@ -214,7 +257,7 @@ function FileUpload(
 				</CardContent>
 			</Card>
 
-			
+
 		</div>
 
 	);

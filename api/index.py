@@ -33,6 +33,7 @@ def upload_file():
     file = request.files['file']
     x_attribute = request.form.get('xAttribute')  # Debe venir desde form, no JSON
     y_attribute = request.form.get('yAttribute')  # Debe venir desde form, no JSON
+    aux_attribute = request.form.get('AuxAttribute')
     on_time = request.form.get('onTime') == '1'
 
     if file and file.filename.endswith('.csv') and y_attribute and (x_attribute or on_time):
@@ -49,9 +50,11 @@ def upload_file():
             else:
                 x_axis = df[x_attribute]
                 y_axis = df[y_attribute] 
-             
         
-
+        if aux_attribute != '':
+            aux_axis = df[aux_attribute]
+            y_axis = y_axis / aux_axis
+             
         plt.figure(figsize=(10, 6))
         plt.plot(x_axis,y_axis)
         plt.title("Grafico re cheto!")

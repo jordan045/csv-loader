@@ -1,12 +1,20 @@
+"use client"
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface CardWrapperProps {
     graphs: string[];
 }
 
 export default function CardWrapper({ graphs }: CardWrapperProps) {
+    const [showGraphs, setShowGraphs] = useState(graphs.map(() => true));
+    const handleDelete = (index: number) => {
+        const newShowGraphs = [...showGraphs];
+        newShowGraphs[index] = false;
+        setShowGraphs(newShowGraphs);
+      };
     const Download04Icon = (props: React.SVGProps<SVGSVGElement>) => (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={24} height={24} color={"#000000"} fill={"none"} {...props}>
             <path d="M12 14.5L12 4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -33,12 +41,15 @@ export default function CardWrapper({ graphs }: CardWrapperProps) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-3 h-min mt-2 mx-auto">
             {graphs.map((graph, index) => (
-                <Card key={index} className="w-full h-auto mx-auto">
+                <Card 
+                    key={index} 
+                    className="w-full h-auto mx-auto ${showGraphs[index] ? 'block' : 'hidden'}"
+                    >
                     <div className="flex items-center space-x-2 p-2 justify-end">
                         <Button variant="ghost" onClick={() => handleDownload(index)}>
                             <Download04Icon />
                         </Button>
-                        <Button variant="ghost">
+                        <Button variant="ghost" onClick={() => handleDelete(index)}>
                             <Delete02Icon />
                         </Button>
                     </div>
